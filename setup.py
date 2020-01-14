@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name='freshsalessdk',
-    version='0.0.1',
+    version='0.0.2',
     author='Siva Narayanan',
     author_email='siva@fyle.in',
     description='Python SDK for accessing Freshsales',
