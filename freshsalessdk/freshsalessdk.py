@@ -1,9 +1,10 @@
 import requests
 import json
 import time
+import copy
 
 class APIBase:
-    def __init__(self, resource_type, domain, api_key, resource_type_singular=None):
+    def __init__(self, resource_type, domain, api_key, resource_type_singular=None, default_params={}):
         self.resource_type = resource_type
         self.resource_type_singular = resource_type_singular
         if self.resource_type_singular is None:
@@ -11,6 +12,7 @@ class APIBase:
             self.resource_type_singular = self.resource_type[0:-1]
         self.domain = domain
         self.api_key = api_key
+        self.default_params = default_params
 
     def _get(self, path, params={}):
         """Create a HTTP GET request.
@@ -26,7 +28,7 @@ class APIBase:
         assert path.startswith('/')
 
         api_headers = {'Authorization': f'Token token={self.api_key}'}
-        api_params = {}
+        api_params = copy.deepcopy(self.default_params)
 
         for k in params:
             # ignore all unused params
@@ -39,6 +41,7 @@ class APIBase:
 
                 api_params[k] = p
 
+#        print(f'passing params {api_params}')
         response = requests.get(
             f'https://{self.domain}.freshsales.io{path}', 
             headers=api_headers, 
@@ -48,33 +51,55 @@ class APIBase:
         response.raise_for_status()
 
         result = json.loads(response.text)
+#        print(f'result = {result}')
         return result
 
     def _get_views(self):
-        return self._get(path=f'/{self.resource_type}/filters', params={})['filters']
+        return self._get(path=f'/{self.resource_type}/filters')['filters']
 
     @staticmethod
-    def _find_owner(users, owner_id):
-        for u in users:
-            if u['id'] == owner_id:
-                return u
+    def _find_obj_by_id(objs, id):
+#        print(f'trying to find {id} in {objs}')
+        for o in objs:
+            if o['id'] == id:
+                return o
         return None
+
+    @staticmethod
+    def _normalize(obj, container):
+        users = []
+        sales_accounts = []
+        deal_stages = []
+        if 'users' in container:
+            users = container['users']
+        if 'sales_accounts' in container:
+            sales_accounts = container['sales_accounts']
+        if 'deal_stages' in container:
+            deal_stages = container['deal_stages']
+        if 'owner_id' in obj:
+            owner = APIBase._find_obj_by_id(objs=users, id=obj['owner_id'])
+            obj['owner'] = owner
+        if 'sales_account_id' in obj:
+            sales_account = APIBase._find_obj_by_id(objs=sales_accounts, id=obj['sales_account_id'])
+            obj['sales_account'] = sales_account
+        if 'deal_stage_id' in obj:
+            deal_stage = APIBase._find_obj_by_id(objs=deal_stages, id=obj['deal_stage_id'])
+            obj['deal_stage'] = deal_stage
+
 
     def _get_all_generator(self, view_id):
         page = 1
         while True:
             start_time = time.time()
-            params = {'sort': 'updated_at', 'sort_type': 'desc', 'include': 'owner', 'page': page}
+            params = {'page': page}
             res = self._get(path=f'/{self.resource_type}/view/{view_id}', params=params)
             total_pages = res['meta']['total_pages']
-            users = res['users']
             end_time = time.time()
-            print(f'got page {page} of {total_pages} in {end_time-start_time} seconds')
+#            print(f'got page {page} of {total_pages} in {end_time-start_time} seconds')
         
             objs = res[self.resource_type]
             for obj in objs:
-                owner = APIBase._find_owner(users, obj['owner_id'])
-                obj['owner'] = owner
+                APIBase._normalize(obj=obj, container=res)
                 yield obj
 
             page = page + 1
@@ -82,12 +107,9 @@ class APIBase:
                 break
 
     def _get_by_id(self, id):
-        params = {'include': 'owner'}
-        res = self._get(path=f'/{self.resource_type}/{id}', params=params)
-        users = res['users']
+        res = self._get(path=f'/{self.resource_type}/{id}')
         v = res[self.resource_type_singular]
-        owner = APIBase._find_owner(users, v['owner_id'])
-        v['owner'] = owner
+        APIBase._normalize(obj=v, container=res)
         return v
 
     def get_views(self):
@@ -105,7 +127,8 @@ class APIBase:
 
 class Contacts(APIBase):
     def __init__(self, domain, api_key):
-        super().__init__(domain=domain, api_key=api_key, resource_type='contacts')
+        default_params = {'include': 'sales_accounts,appointments,owner', 'sort': 'updated_at', 'sort_type': 'desc'}
+        super().__init__(domain=domain, api_key=api_key, resource_type='contacts', default_params=default_params)
 
     def get_activities(self, id):
         return self._get(f'/contacts/{id}/activities')['activities']
@@ -113,12 +136,14 @@ class Contacts(APIBase):
 
 class Accounts(APIBase):
     def __init__(self, domain, api_key):
-        super().__init__(domain=domain, api_key=api_key, resource_type='sales_accounts')
+        default_params = {'include': 'appointments,owner', 'sort': 'updated_at', 'sort_type': 'desc'}
+        super().__init__(domain=domain, api_key=api_key, resource_type='sales_accounts', default_params=default_params)
 
 
 class Deals(APIBase):
     def __init__(self, domain, api_key):
-        super().__init__(domain=domain, api_key=api_key, resource_type='deals')
+        default_params = {'include': 'sales_account,appointments,owner,deal_stage', 'sort': 'updated_at', 'sort_type': 'desc'}
+        super().__init__(domain=domain, api_key=api_key, resource_type='deals', default_params=default_params)
 
 
 class FreshsalesSDK:
