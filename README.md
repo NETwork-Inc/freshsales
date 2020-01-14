@@ -43,10 +43,10 @@ contacts = list(fs.contacts.get_all_generator(view_id=view_id))
 
 # get specific contact
 contact_id = 1232
-contact = fs.contacts.get(contact_id=contact_id)
+contact = fs.contacts.get(id=contact_id)
 
 # get contact activities
-activities = fs.contacts.get_activities(contact_id=contact_id)
+activities = fs.contacts.get_activities(id=contact_id)
 
 # get account views
 views = fs.accounts.get_views()
@@ -58,7 +58,7 @@ accounts = list(fs.accounts.get_all_generator(view_id=view_id))
 
 # get one account
 account_id = 1221
-account = fs.accounts.get(account_id=account_id)
+account = fs.accounts.get(id=account_id)
 
 # get deal views
 views = fs.deals.get_views()
@@ -70,7 +70,7 @@ deals = list(fs.deals.get_all_generator(view_id=view_id))
 
 # get single deal
 deal_id = 12121
-deal = fs.deals.get(deal_id=deal_id)
+deal = fs.deals.get(id=deal_id)
 ```
 
 ## License

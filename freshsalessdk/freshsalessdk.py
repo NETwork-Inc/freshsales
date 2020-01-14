@@ -1,12 +1,14 @@
 import requests
 import json
+import time
 
-class API:
-    def __init__(self, domain, api_key):
+class APIBase:
+    def __init__(self, resource_type, domain, api_key):
+        self.resource_type = resource_type
         self.domain = domain
         self.api_key = api_key
 
-    def _get(self, params, path):
+    def _get(self, path, params={}):
         """Create a HTTP GET request.
 
         Parameters:
@@ -44,58 +46,61 @@ class API:
         result = json.loads(response.text)
         return result
 
+    def _get_views(self):
+        return self._get(path=f'/{self.resource_type}/filters', params={})['filters']
 
-class Contacts(API):
-    def __init__(self, domain, api_key):
-        super().__init__(domain=domain, api_key=api_key)
+    def _get_all_generator(self, view_id):
+        page = 1
+        while True:
+            start_time = time.time()
+            params = {'sort': 'updated_at', 'sort_type': 'desc', 'page': page}
+            res = self._get(path=f'/{self.resource_type}/view/{view_id}', params=params)
+            total_pages = res['meta']['total_pages']
+            end_time = time.time()
+            print(f'got page {page} of {total_pages} in {end_time-start_time} seconds')
+        
+            contacts = res[self.resource_type]
+            for contact in contacts:
+                yield contact
+
+            page = page + 1
+            if page > total_pages:
+                break
+
+    def _get_by_id(self, id):
+        values = self._get(path=f'/{self.resource_type}/{id}').values()
+        return list(values)[0]
 
     def get_views(self):
-        return self._get(path='/contacts/filters', params={})['filters']
+        return self._get_views()
 
     def get_all_generator(self, view_id):
-        raise NotImplementedError('not implemented')
+        return self._get_all_generator(view_id=view_id)
 
     def get_all(self, view_id):
         return list(self.get_all_generator(view_id=view_id))
     
-    def get(self, contact_id):
-        raise NotImplementedError('not implemented')
+    def get(self, id):
+        return self._get_by_id(id=id)
 
-    def get_activities(self, contact_id):
-        raise NotImplementedError('not implemented')
 
-class Accounts(API):
+class Contacts(APIBase):
     def __init__(self, domain, api_key):
-        super().__init__(domain=domain, api_key=api_key)
+        super().__init__(domain=domain, api_key=api_key, resource_type='contacts')
 
-    def get_views(self):
-        raise NotImplementedError('not implemented')
-
-    def get_all_generator(self, view_id):
-        raise NotImplementedError('not implemented')
-
-    def get_all(self, view_id):
-        return list(self.get_all_generator(view_id=view_id))
-    
-    def get(self, account_id):
-        raise NotImplementedError('not implemented')
+    def get_activities(self, id):
+        return self._get(f'/contacts/{id}/activities')['activities']
 
 
-class Deals(API):
+class Accounts(APIBase):
     def __init__(self, domain, api_key):
-        super().__init__(domain=domain, api_key=api_key)
+        super().__init__(domain=domain, api_key=api_key, resource_type='sales_accounts')
 
-    def get_views(self):
-        raise NotImplementedError('not implemented')
 
-    def get_all_generator(self, view_id):
-        raise NotImplementedError('not implemented')
+class Deals(APIBase):
+    def __init__(self, domain, api_key):
+        super().__init__(domain=domain, api_key=api_key, resource_type='deals')
 
-    def get_all(self, view_id):
-        return list(self.get_all_generator(view_id=view_id))
-    
-    def get(self, account_id):
-        raise NotImplementedError('not implemented')
 
 class FreshsalesSDK:
     def __init__(self, domain, api_key):
