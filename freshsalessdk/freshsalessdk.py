@@ -3,8 +3,12 @@ import json
 import time
 
 class APIBase:
-    def __init__(self, resource_type, domain, api_key):
+    def __init__(self, resource_type, domain, api_key, resource_type_singular=None):
         self.resource_type = resource_type
+        self.resource_type_singular = resource_type_singular
+        if self.resource_type_singular is None:
+        # best guess is to remove last letter
+            self.resource_type_singular = self.resource_type[0:-1]
         self.domain = domain
         self.api_key = api_key
 
@@ -49,27 +53,42 @@ class APIBase:
     def _get_views(self):
         return self._get(path=f'/{self.resource_type}/filters', params={})['filters']
 
+    @staticmethod
+    def _find_owner(users, owner_id):
+        for u in users:
+            if u['id'] == owner_id:
+                return u
+        return None
+
     def _get_all_generator(self, view_id):
         page = 1
         while True:
             start_time = time.time()
-            params = {'sort': 'updated_at', 'sort_type': 'desc', 'page': page}
+            params = {'sort': 'updated_at', 'sort_type': 'desc', 'include': 'owner', 'page': page}
             res = self._get(path=f'/{self.resource_type}/view/{view_id}', params=params)
             total_pages = res['meta']['total_pages']
+            users = res['users']
             end_time = time.time()
             print(f'got page {page} of {total_pages} in {end_time-start_time} seconds')
         
-            contacts = res[self.resource_type]
-            for contact in contacts:
-                yield contact
+            objs = res[self.resource_type]
+            for obj in objs:
+                owner = APIBase._find_owner(users, obj['owner_id'])
+                obj['owner'] = owner
+                yield obj
 
             page = page + 1
             if page > total_pages:
                 break
 
     def _get_by_id(self, id):
-        values = self._get(path=f'/{self.resource_type}/{id}').values()
-        return list(values)[0]
+        params = {'include': 'owner'}
+        res = self._get(path=f'/{self.resource_type}/{id}', params=params)
+        users = res['users']
+        v = res[self.resource_type_singular]
+        owner = APIBase._find_owner(users, v['owner_id'])
+        v['owner'] = owner
+        return v
 
     def get_views(self):
         return self._get_views()
