@@ -2,13 +2,16 @@ import requests
 import json
 import time
 import copy
+import logging
+
+logger = logging.getLogger(__name__)
 
 class APIBase:
     def __init__(self, resource_type, domain, api_key, resource_type_singular=None, default_params={}):
         self.resource_type = resource_type
         self.resource_type_singular = resource_type_singular
-        if self.resource_type_singular is None:
         # best guess is to remove last letter
+        if self.resource_type_singular is None:
             self.resource_type_singular = self.resource_type[0:-1]
         self.domain = domain
         self.api_key = api_key
@@ -41,18 +44,19 @@ class APIBase:
 
                 api_params[k] = p
 
-#        print(f'passing params {api_params}')
+        api_path = f'https://{self.domain}.freshsales.io{path}'
+        logger.debug('calling get %s passing params %s', api_path, api_params)
         response = requests.get(
-            f'https://{self.domain}.freshsales.io{path}', 
+            url=api_path, 
             headers=api_headers, 
             params=api_params
         )
         # raise exception if not 200
         response.raise_for_status()
 
-        result = json.loads(response.text)
-#        print(f'result = {result}')
-        return result
+        res = json.loads(response.text)
+        logger.debug('res = %s', res)
+        return res
 
     def _get_views(self):
         return self._get_generic(path=f'/{self.resource_type}/filters')['filters']
@@ -82,8 +86,8 @@ class APIBase:
             res = self._get_generic(path=f'/{self.resource_type}/view/{view_id}', params=params)
             total_pages = res['meta']['total_pages']
             end_time = time.time()
-#            print(f'got page {page} of {total_pages} in {end_time-start_time} seconds')
-        
+            logger.debug(f'got page %s of %s in %s seconds', page, total_pages, end_time-start_time)
+    
             objs = res[self.resource_type]
             for obj in objs:
                 self._normalize(obj=obj, container=res)
