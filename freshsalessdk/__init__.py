@@ -1,7 +1,7 @@
 from .freshsalessdk import FreshsalesSDK
 
 __all__ = [
-    FreshsalesSDK
+    'FreshsalesSDK'
 ]
 
 name = "freshsalessdk"

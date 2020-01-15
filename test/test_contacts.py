@@ -12,6 +12,7 @@ def contacts_view_id(fs):
         if re.match('all', v['name'].lower()):
             return v['id']
     assert False, 'Could not find a contacts view'
+    return None
 
 def assert_contact_well_formed(contact):
     ref_contact = dict_read('contact.json')

@@ -1,7 +1,8 @@
 import logging
-import re
 import os
+
 import pytest
+
 from freshsalessdk import FreshsalesSDK
 
 logger = logging.getLogger(__name__)
@@ -15,5 +16,3 @@ def fs():
         domain=os.getenv('FS_DOMAIN'),
         api_key=os.getenv('FS_API_KEY')
     )
-
-

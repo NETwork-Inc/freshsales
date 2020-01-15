@@ -73,7 +73,12 @@ deal_id = 12121
 deal = fs.deals.get(id=deal_id)
 ```
 
-## Integration Tests and Code Coverage
+## Code-hygiene, Tests and Code Coverage
+
+To ensure that coding styles are followed, run the following command:
+```
+pylint --rcfile=.pylintrc freshsalessdk test
+```
 
 To run integration tests, you'll need to set FS_DOMAIN and FS_API_KEY environment variables. In addition, you should have
 a view with all objects "All Contacts" for contacts and similarly "All Accounts" for accounts and "All Deals" for deals. Then simply run:

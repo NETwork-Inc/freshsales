@@ -1,6 +1,7 @@
 from os import path
 import json
 
+
 def clean(d):
     if isinstance(d, dict):
         d1 = {}
@@ -8,12 +9,12 @@ def clean(d):
             v = d[k]
             if isinstance(v, dict):
                 v = clean(v)
+            elif isinstance(v, list):
+                v = clean(v)
             elif isinstance(v, int):
                 v = 0
             elif isinstance(v, float):
                 v = 0.0
-            elif isinstance(v, list):
-                v = clean(v)
             else:
                 v = 'xxx'
             d1[k] = v
@@ -23,13 +24,16 @@ def clean(d):
         for v in d:
             d1.append(clean(v))
         return d1
-    return d
+    else:
+        return d
+
 
 def dict_read(filename):
     basepath = path.dirname(__file__)
     filepath = path.join(basepath, filename)
     json_str = open(filepath, 'r').read()
     return json.loads(json_str)
+
 
 def dict_compare_keys(d1, d2, key_path=''):
     ''' Compare two dicts recursively and see if dict1 has any keys that dict2 does not
