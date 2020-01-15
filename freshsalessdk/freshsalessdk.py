@@ -55,7 +55,7 @@ class APIBase:
         response.raise_for_status()
 
         res = json.loads(response.text)
-        logger.debug('res = %s', res)
+#        logger.debug('res = %s', res)
         return res
 
     def _get_views(self):
@@ -92,7 +92,7 @@ class APIBase:
             for obj in objs:
                 self._normalize(obj=obj, container=res)
                 num = num + 1
-                if limit and num >= limit:
+                if limit and num > limit:
                     return
                 yield obj
 

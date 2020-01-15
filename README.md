@@ -76,7 +76,7 @@ deal = fs.deals.get(id=deal_id)
 ## Integration Tests and Code Coverage
 
 To run integration tests, you'll need to set FS_DOMAIN and FS_API_KEY environment variables. In addition, you should have
-a view called "Recently Modified" for contacts, accounts and deals. Then simply run:
+a view with all objects "All Contacts" for contacts and similarly "All Accounts" for accounts and "All Deals" for deals. Then simply run:
 
 ```
 python -m pytest
@@ -94,7 +94,9 @@ To get code coverage report in HTML, run this command:
 python -m pytest --cov=freshsalessdk --cov-report html:cov_html
 ```
 
-We want to maintain 100% code coverage.
+We want to maintain more than 90% code coverage.
+
+To get lots of debugging data during tests, edit the pytest.ini file.
 
 ## License
 
