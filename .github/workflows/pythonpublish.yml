@@ -19,6 +19,9 @@ jobs:
         pip install -r requirements.txt
         pip install setuptools wheel twine
     - name: Run tests
+      env:
+        FS_DOMAIN: $${{ secrets.FS_DOMAIN }}
+        FS_API_KEY: $${{ secrets.FS_API_KEY }}
       run: |
         python -m pytest
     - name: Build and publish
