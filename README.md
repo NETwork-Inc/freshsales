@@ -88,15 +88,25 @@ To get code coverage, run the tests thusly.
 python -m pytest --cov=freshsalessdk
 ```
 
+Which produces output like this:
+
+```
+---------- coverage: platform darwin, python 3.7.4-final-0 -----------
+Name                             Stmts   Miss  Cover
+----------------------------------------------------
+freshsalessdk/__init__.py            3      0   100%
+freshsalessdk/freshsalessdk.py     130      6    95%
+----------------------------------------------------
+TOTAL                              133      6    95%
+```
+
+We want to maintain more than 90% code coverage. To get lots of debugging data during tests, edit the pytest.ini file.
+
 To get code coverage report in HTML, run this command:
 
 ```
 python -m pytest --cov=freshsalessdk --cov-report html:cov_html
 ```
-
-We want to maintain more than 90% code coverage.
-
-To get lots of debugging data during tests, edit the pytest.ini file.
 
 ## License
 
