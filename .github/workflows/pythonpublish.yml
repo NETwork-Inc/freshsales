@@ -18,6 +18,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install setuptools wheel twine
+    - name: Pylint checks
+      run: |
+        pylint --rcfile=.pylintrc freshsalessdk test
     - name: Run tests
       env:
         FS_DOMAIN: ${{ secrets.FS_DOMAIN }}
