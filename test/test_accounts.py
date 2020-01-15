@@ -1,6 +1,7 @@
 import logging
 import re
 import pytest
+from .common import dict_read, dict_compare_keys
 
 logger = logging.getLogger(__name__)
 
@@ -13,8 +14,12 @@ def accounts_view_id(fs):
     assert False, 'Could not find a accounts view'
 
 def assert_account_well_formed(account):
-    logger.debug('checking account %s', account)
-    assert set(['id', 'name', 'owner']) - set(account.keys()) == set([]), 'some keys are missing'
+    ref_account = dict_read('account.json')
+    logger.debug('account = %s', account)
+    logger.debug('ref_account = %s', ref_account)
+    diff = dict_compare_keys(account, ref_account)
+    logger.debug('dict_compare = %s', diff)
+    assert diff == [], 'unexpected account structure'
 
 def test_accounts_get_views(fs):
     views = fs.accounts.get_views()

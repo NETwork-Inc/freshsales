@@ -1,6 +1,7 @@
 import logging
 import re
 import pytest
+from .common import dict_read, dict_compare_keys
 
 logger = logging.getLogger(__name__)
 
@@ -13,8 +14,12 @@ def deals_view_id(fs):
     assert False, 'Could not find a deals view'
 
 def assert_deal_well_formed(deal):
-    logger.debug('checking deal %s', deal)
-    assert set(['id', 'owner', 'sales_account', 'deal_stage']) - set(deal.keys()) == set([]), 'some keys are missing'
+    ref_deal = dict_read('deal.json')
+    logger.debug('deal = %s', deal)
+    logger.debug('ref_deal = %s', ref_deal)
+    diff = dict_compare_keys(deal, ref_deal)
+    logger.debug('dict_compare = %s', diff)
+    assert diff == [], 'unexpected deal structure'
 
 def test_deals_get_views(fs):
     views = fs.deals.get_views()

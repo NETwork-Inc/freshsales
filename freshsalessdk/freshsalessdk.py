@@ -129,14 +129,9 @@ class Contacts(APIBase):
         sales_accounts = []
         if 'users' in container:
             users = container['users']
-        if 'sales_accounts' in container:
-            sales_accounts = container['sales_accounts']
         if 'owner_id' in obj:
             owner = APIBase._find_obj_by_id(objs=users, id=obj['owner_id'])
             obj['owner'] = owner
-        if 'sales_account_id' in obj:
-            sales_account = APIBase._find_obj_by_id(objs=sales_accounts, id=obj['sales_account_id'])
-            obj['sales_account'] = sales_account
 
     def get_activities(self, id):
         return self._get_generic(f'/contacts/{id}/activities')['activities']

@@ -1,6 +1,7 @@
 import logging
 import re
 import pytest
+from .common import dict_read, dict_compare_keys
 
 logger = logging.getLogger(__name__)
 
@@ -13,8 +14,12 @@ def contacts_view_id(fs):
     assert False, 'Could not find a contacts view'
 
 def assert_contact_well_formed(contact):
-    logger.debug('checking contact %s', contact)
-    assert set(['id', 'first_name', 'last_name', 'owner', 'sales_accounts']) - set(contact.keys()) == set([]), 'some keys are missing'
+    ref_contact = dict_read('contact.json')
+    logger.debug('contact = %s', contact)
+    logger.debug('ref_contact = %s', ref_contact)
+    diff = dict_compare_keys(contact, ref_contact)
+    logger.debug('dict_compare = %s', diff)
+    assert diff == [], 'unexpected contact structure'
 
 def test_contacts_get_views(fs):
     views = fs.contacts.get_views()
@@ -25,5 +30,7 @@ def test_contacts_get_all_generator(fs, contacts_view_id):
         assert_contact_well_formed(contact)
 
 def test_contacts_get(fs, contacts_view_id):
-    contact = next(fs.contacts.get_all_generator(view_id=contacts_view_id, limit=1))
-    assert_contact_well_formed(contact)
+    contact1 = next(fs.contacts.get_all_generator(view_id=contacts_view_id, limit=1))
+    assert_contact_well_formed(contact1)
+    contact2 = fs.contacts.get(id=contact1['id'])
+    assert_contact_well_formed(contact2)

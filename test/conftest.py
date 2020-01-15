@@ -6,6 +6,7 @@ from freshsalessdk import FreshsalesSDK
 
 logger = logging.getLogger(__name__)
 
+
 @pytest.fixture
 def fs():
     assert os.getenv('FS_DOMAIN') is not None, 'FS_DOMAIN is not set'
@@ -14,3 +15,5 @@ def fs():
         domain=os.getenv('FS_DOMAIN'),
         api_key=os.getenv('FS_API_KEY')
     )
+
+
