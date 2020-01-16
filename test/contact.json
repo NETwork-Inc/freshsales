@@ -98,10 +98,10 @@
       "mobile_number": "xxx"
     },
     "contact_status_id": 0,
-    "contact_status": [{
+    "contact_status": {
         "partial": true,
         "id": 0,
         "name": "xxx",
         "position": 0
-    }]
+    }
   }
