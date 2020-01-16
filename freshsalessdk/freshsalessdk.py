@@ -145,6 +145,16 @@ class Contacts(APIBase):
         if 'contact_status_id' in obj:
             contact_status = APIBase._find_obj_by_id(objs=contact_statuses, id=obj['contact_status_id'])
             obj['contact_status'] = contact_status
+        appointments = []
+        if 'appointments' in container:
+            appointments = container['appointments']
+        if 'appointment_ids' in obj:
+            res = []
+            for appointment_id in obj['appointment_ids']:
+                res.append(APIBase._find_obj_by_id(objs=appointments, id=appointment_id))
+            obj['appointments'] = res
+
+
 
     def get_activities(self, id):
         return self._get_generic(f'/contacts/{id}/activities')['activities']
