@@ -127,7 +127,7 @@ class APIBase:
 
 class Contacts(APIBase):
     def __init__(self, domain, api_key):
-        default_params = {'include': 'sales_accounts,appointments,owner',
+        default_params = {'include': 'sales_accounts,appointments,owner,contact_status',
                           'sort': 'updated_at', 'sort_type': 'desc'}
         super().__init__(domain=domain, api_key=api_key,
                          resource_type='contacts', default_params=default_params)
@@ -139,6 +139,12 @@ class Contacts(APIBase):
         if 'owner_id' in obj:
             owner = APIBase._find_obj_by_id(objs=users, id=obj['owner_id'])
             obj['owner'] = owner
+        contact_statuses = []
+        if 'contact_status' in container:
+            contact_statuses = container['contact_status']
+        if 'contact_status_id' in obj:
+            contact_status = APIBase._find_obj_by_id(objs=contact_statuses, id=obj['contact_status_id'])
+            obj['contact_status'] = contact_status
 
     def get_activities(self, id):
         return self._get_generic(f'/contacts/{id}/activities')['activities']
