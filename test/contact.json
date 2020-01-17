@@ -44,7 +44,8 @@
   "last_contacted_sales_activity_mode": "xxx",
   "custom_field": {
     "cf_hq": "xxx",
-    "cf_contact_import_source": "xxx"
+    "cf_contact_import_source": "xxx",
+    "cf_test_parameter": "xxx"
   },
   "created_at": "xxx",
   "updated_at": "xxx",
@@ -130,7 +131,14 @@
       "updater_id": "xxx",
       "appointment_attendee_ids": [
         0
-      ]
+      ],
+      "outcome": {
+        "partial": true,
+        "id": 0,
+        "name": "xxx",
+        "sales_activity_type_id": 0,
+        "position": 0
+      }
     }
   ]
 }

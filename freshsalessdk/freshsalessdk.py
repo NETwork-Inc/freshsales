@@ -136,24 +136,30 @@ class Contacts(APIBase):
         users = []
         if 'users' in container:
             users = container['users']
-        if 'owner_id' in obj:
-            owner = APIBase._find_obj_by_id(objs=users, id=obj['owner_id'])
-            obj['owner'] = owner
         contact_statuses = []
         if 'contact_status' in container:
             contact_statuses = container['contact_status']
-        if 'contact_status_id' in obj:
-            contact_status = APIBase._find_obj_by_id(objs=contact_statuses, id=obj['contact_status_id'])
-            obj['contact_status'] = contact_status
         appointments = []
         if 'appointments' in container:
             appointments = container['appointments']
+        outcomes = []
+        if 'outcomes' in container:
+            outcomes = container['outcomes']
+
+        if 'owner_id' in obj:
+            owner = APIBase._find_obj_by_id(objs=users, id=obj['owner_id'])
+            obj['owner'] = owner
+        if 'contact_status_id' in obj:
+            contact_status = APIBase._find_obj_by_id(objs=contact_statuses, id=obj['contact_status_id'])
+            obj['contact_status'] = contact_status
         if 'appointment_ids' in obj:
             res = []
             for appointment_id in obj['appointment_ids']:
-                res.append(APIBase._find_obj_by_id(objs=appointments, id=appointment_id))
+                ap = APIBase._find_obj_by_id(objs=appointments, id=appointment_id)
+                outcome = APIBase._find_obj_by_id(objs=outcomes, id=ap['outcome_id'])
+                ap['outcome'] = outcome
+                res.append(ap)
             obj['appointments'] = res
-
 
 
     def get_activities(self, id):
