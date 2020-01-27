@@ -46,7 +46,8 @@
       "cf_purchase_intent": "xxx",
       "cf_engagement_level": "xxx",
       "cf_product_awareness": "xxx",
-      "cf_import_source": "xxx"
+      "cf_import_source": "xxx",
+      "cf_number_of_employees_range": "xxx"
     },
     "created_at": "xxx",
     "updated_at": "xxx",
@@ -71,5 +72,12 @@
       "is_active": 0,
       "work_number": "xxx",
       "mobile_number": "xxx"
+    },
+    "industry_type_id": 0,
+    "industry_type": {
+      "partial": true,
+      "id": 0,
+      "name": "xxx",
+      "position": 0
     }
   }

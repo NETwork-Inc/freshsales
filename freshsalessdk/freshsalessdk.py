@@ -171,7 +171,7 @@ class Contacts(APIBase):
 
 class Accounts(APIBase):
     def __init__(self, domain, api_key):
-        default_params = {'include': 'appointments,owner',
+        default_params = {'include': 'appointments,owner,industry_type',
                           'sort': 'updated_at', 'sort_type': 'desc'}
         super().__init__(domain=domain, api_key=api_key,
                          resource_type='sales_accounts', default_params=default_params)
@@ -183,6 +183,12 @@ class Accounts(APIBase):
         if 'owner_id' in obj:
             owner = APIBase._find_obj_by_id(objs=users, id=obj['owner_id'])
             obj['owner'] = owner
+        industry_types = []
+        if 'industry_types' in container:
+            industry_types = container['industry_types']
+        if 'industry_type_id' in obj:
+            industry_type = APIBase._find_obj_by_id(objs=industry_types, id=obj['industry_type_id'])
+            obj['industry_type'] = industry_type
 
 
 class Deals(APIBase):
