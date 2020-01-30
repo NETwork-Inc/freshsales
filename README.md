@@ -82,7 +82,7 @@ leads = list(fs.leads.get_all_generator(view_id=view_id))
 
 # get single lead
 lead_id = 121212
-lead = fs.leads.get(id=deal_id)
+lead = fs.leads.get(id=lead_id)
 ```
 
 ## Code-hygiene, Tests and Code Coverage
