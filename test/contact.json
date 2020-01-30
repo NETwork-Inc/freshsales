@@ -15,6 +15,7 @@
       "id": 0,
       "value": "xxx",
       "is_primary": 0,
+      "label": "xxx",
       "_destroy": 0
     }
   ],
@@ -45,6 +46,11 @@
   "custom_field": {
     "cf_hq": "xxx",
     "cf_contact_import_source": "xxx",
+    "cf_bdr_stage_-_contact": "xxx",
+    "cf_unqualification_reason": "xxx",
+    "cf_ds_stage_-_contact": "xxx",
+    "cf_ae_stage_-_contact": "xxx",
+    "cf_closed_won_reason": "xxx",
     "cf_test_parameter": "xxx"
   },
   "created_at": "xxx",
