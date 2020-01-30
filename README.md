@@ -71,6 +71,18 @@ deals = list(fs.deals.get_all_generator(view_id=view_id))
 # get single deal
 deal_id = 12121
 deal = fs.deals.get(id=deal_id)
+
+# get lead views
+leads = fs.leads.get_views()
+
+# get leads in a view
+view_id = 1231
+leads = fs.leads.get_all(view_id=view_id)
+leads = list(fs.leads.get_all_generator(view_id=view_id))
+
+# get single lead
+lead_id = 121212
+lead = fs.leads.get(id=deal_id)
 ```
 
 ## Code-hygiene, Tests and Code Coverage

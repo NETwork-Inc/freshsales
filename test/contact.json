@@ -133,7 +133,7 @@
         0
       ],
       "outcome": {
-        "partial": true,
+        "partial": 0,
         "id": 0,
         "name": "xxx",
         "sales_activity_type_id": 0,
