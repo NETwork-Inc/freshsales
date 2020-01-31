@@ -34,10 +34,10 @@ fs = FreshsalesSDK(
 )
 
 # get contact views
-views = fs.contacts.get_views()
+contact_views = fs.contacts.get_views()
 
 # get contacts in a view
-view_id = 123
+view_id = contact_views[0]['id']
 contacts = fs.contacts.get_all(view_id=view_id)
 contacts = list(fs.contacts.get_all_generator(view_id=view_id))
 
@@ -49,10 +49,10 @@ contact = fs.contacts.get(id=contact_id)
 activities = fs.contacts.get_activities(id=contact_id)
 
 # get account views
-views = fs.accounts.get_views()
+account_views = fs.accounts.get_views()
 
 # get accounts in a view
-view_id = 123
+view_id = account_views[0]['id']
 accounts = fs.accounts.get_all(view_id=view_id)
 accounts = list(fs.accounts.get_all_generator(view_id=view_id))
 
@@ -61,16 +61,28 @@ account_id = 1221
 account = fs.accounts.get(id=account_id)
 
 # get deal views
-views = fs.deals.get_views()
+deal_views = fs.deals.get_views()
 
 # get deals in a view
-view_id = 1212
+view_id = deal_views[0]['id']
 deals = fs.deals.get_all(view_id=view_id)
 deals = list(fs.deals.get_all_generator(view_id=view_id))
 
 # get single deal
 deal_id = 12121
 deal = fs.deals.get(id=deal_id)
+
+# get lead views
+lead_views = fs.leads.get_views()
+
+# get leads in a view
+view_id = lead_views[0]['id']
+leads = fs.leads.get_all(view_id=view_id)
+leads = list(fs.leads.get_all_generator(view_id=view_id))
+
+# get single lead
+lead_id = 121212
+lead = fs.leads.get(id=lead_id)
 ```
 
 ## Code-hygiene, Tests and Code Coverage

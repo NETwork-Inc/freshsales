@@ -220,9 +220,30 @@ class Deals(APIBase):
                 objs=deal_stages, id=obj['deal_stage_id'])
             obj['deal_stage'] = deal_stage
 
+class Leads(APIBase):
+    def __init__(self, domain, api_key):
+        default_params = {'include': 'sales_account,appointments,owner,lead_stage',
+                          'sort': 'updated_at', 'sort_type': 'desc'}
+        super().__init__(domain=domain, api_key=api_key,
+                         resource_type='leads', default_params=default_params)
+
+    def _normalize(self, obj, container):
+        users = []
+        lead_stage = []
+        if 'users' in container:
+            users = container['users']
+        if 'owner_id' in obj:
+            owner = APIBase._find_obj_by_id(objs=users, id=obj['owner_id'])
+            obj['owner'] = owner
+        if 'lead_stages' in container:
+            lead_stages = container['lead_stages']
+        if 'lead_stage_id' in obj:
+            lead_stage = APIBase._find_obj_by_id(objs=lead_stages, id=obj['lead_stage_id'])
+            obj['lead_stage'] = lead_stage
 
 class FreshsalesSDK:
     def __init__(self, domain, api_key):
         self.contacts = Contacts(domain=domain, api_key=api_key)
         self.accounts = Accounts(domain=domain, api_key=api_key)
         self.deals = Deals(domain=domain, api_key=api_key)
+        self.leads = Leads(domain=domain, api_key=api_key)
